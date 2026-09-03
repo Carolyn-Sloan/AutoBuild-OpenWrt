@@ -16,6 +16,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      BUILD_DATE: ""
+
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -90,13 +93,17 @@ jobs:
         echo -e "$(nproc) thread build."
         make -j$(nproc) V=s
         
+    - name: Get current date
+      id: date
+      run: echo "BUILD_DATE=$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
+
     - name: Upload firmware to Release
       uses: softprops/action-gh-release@v1
      # if: github.event_name == 'workflow_dispatch' # 可以限制只有手动触发时才发布 Release，或者去掉这行
       with:
         files: openwrt/bin/targets/*/*/*   # 根据你编译生成的固件具体路径调整通配符
-        name: OpenWrt Firmware Automated Build $(date +%Y%m%d)
-        tag_name: v$(date +%Y%m%d-%H%M)
+        name: OpenWrt Firmware Automated Build ${{ env.BUILD_DATE }}
+        tag_name: v${{ env.BUILD_DATE }}
         body: |
           自动编译的 OpenWrt 固件
           - 仓库: ${{ github.repository }}
