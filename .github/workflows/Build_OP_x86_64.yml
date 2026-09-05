@@ -96,14 +96,14 @@ jobs:
     - name: Get current date
       id: date
       run: echo "BUILD_DATE=$(date +%Y%m%d-%H%M)" >> $GITHUB_ENV
-
+      
     - name: Upload firmware to Release
-      uses: softprops/action-gh-release@v2
-     # if: github.event_name == 'workflow_dispatch' # 可以限制只有手动触发时才发布 Release，或者去掉这行
+      uses: softprops/action-gh-release@v3
       with:
-        files: openwrt/bin/targets/*/*/*   # 根据你编译生成的固件具体路径调整通配符
-        name: OpenWrt x86_64-25.12 ${{ env.BUILD_DATE }}
-        tag_name: v${{ env.BUILD_DATE }}
+       files: |
+         openwrt/bin/targets/x86/64/*
+         name: OpenWrt x86_64-25.12 ${{ env.BUILD_DATE }}
+         tag_name: v${{ env.BUILD_DATE }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
